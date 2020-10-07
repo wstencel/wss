@@ -1,0 +1,42 @@
+/**
+Splice Calendar ID
+c_pm9oevkb3qu6jb9olkhklm3jd0@group.calendar.google.com
+**/
+
+function UpdateSpliceCal() {
+  var NEDsTrackerSheet = SpreadsheetApp.openById('1fJdoSye2BC6oM5N-mPHTdWveR6nzGD6u9hpAUGIiMIY');
+  var InternalNEDsTrackerTab = NEDsTrackerSheet.getSheetByName("Internal NED's Tracker");
+  var NEDSpliceDates = InternalNEDsTrackerTab.getRange("G4:CV425").getValues();
+  var calendarID = 'c_pm9oevkb3qu6jb9olkhklm3jd0@group.calendar.google.com';
+  var SpliceCal = CalendarApp.getCalendarById(calendarID);
+  var CurrentDateTime = new Date();
+  var CurrTimeValue = CurrentDateTime.valueOf();
+  var SevenDays = 604800000;
+  var SevenDaysAgo = CurrTimeValue.valueOf() - SevenDays;
+/**  
+  Logger.log(NEDSpliceDates[0][92].valueOf());
+**/ 
+  for (x=0; x<NEDSpliceDates.length; x++) {
+    
+    if (NEDSpliceDates[x][92].valueOf() > SevenDaysAgo) {
+          
+      var NTP = NEDSpliceDates[x][0];
+      var NFID = NEDSpliceDates[x][1];
+      var SiteName = NEDSpliceDates[x][3];
+      var SpliceStartEst = NEDSpliceDates[x][92];
+      var SpliceFinishEst = SpliceStartEst;
+
+      var SpliceEvent = SpliceCal.createEvent(SiteName, SpliceStartEst, SpliceFinishEst, {description: NTP});
+    
+      NEDSpliceDates[x][93] = SpliceEvent.getId();
+      Logger.log(SiteName);
+      Utilities.sleep(1000);
+    }
+
+  }
+/**  
+  var EventIDRange = SpreadsheetApp.getActiveSpreadsheet().getRange("CV4:CV425");
+  var EventIDs = NEDSpliceDates[93];
+  EventIDRange.setValues([EventIDs]);
+**/
+}
